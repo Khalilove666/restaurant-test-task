@@ -6,13 +6,14 @@ import {computed} from "vue";
 const orderStore = useOrders();
 
 const orders = computed(() => {
-    return orderStore.orders.sort((a, b) => {
+    const orders = [...orderStore.orders];
+    return orders.sort((a, b) => {
         if (a.finish_time > b.finish_time) return -1
         else return 1;
     }).sort((a, b) => {
         if (a.status == "ordered" && b.status != "ordered") return -1
         else return 0;
-    })
+    });
 });
 
 </script>

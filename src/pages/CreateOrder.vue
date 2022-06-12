@@ -3,7 +3,7 @@ import {computed, onMounted, ref} from "vue";
 import {useRoute, useRouter} from "vue-router";
 import moment from "moment";
 import {uuid} from "vue3-uuid"
-import {Order, OrderProduct, Product, Table, Waiter} from "../store/types";
+import {Order, OrderProduct, Product, Table, Waiter} from "../store/modules/types";
 import {useOrders} from "../store";
 import {GetProducts, GetTables, GetWaiters} from "../api";
 

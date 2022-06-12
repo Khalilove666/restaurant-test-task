@@ -2,18 +2,18 @@
 import {useRoute, useRouter} from "vue-router";
 import {computed} from "vue";
 import moment from "moment";
-import {useOrders} from "../store";
+import {useStore} from "../store";
+import {Order, Product} from "../store/modules/orders/types";
 
-const router = useRouter();
 const route = useRoute();
-const orderStore = useOrders();
+const store = useStore();
 
 const orderId = route.params.orderId as string;
 
-const currentOrder = computed(() => orderStore.orders.find((order) => order.id == orderId));
+const currentOrder = computed(() => store.getters.allOrders.find((order: Order) => order.id == orderId));
 const currentProducts = computed(() => currentOrder.value?.products || []);
 const totalPrice = computed(() => {
-    return currentProducts.value.reduce((prev, current) => prev + current.price, 0)
+    return currentProducts.value.reduce((prev: number, current: Product) => prev + current.price, 0)
 });
 const isOrderFinished = computed(() => currentOrder.value?.status == "finished");
 const isOrderCancelled = computed(() => currentOrder.value?.status == "cancelled");
@@ -23,19 +23,19 @@ const isOrderFinishable = computed(() => {
 })
 
 function handleCancelProduct(productId: string) {
-    orderStore.cancelProduct(orderId, productId);
+    store.commit("cancelProduct", {orderId, productId});
 }
 
 function handleDeliverProduct(productId: string) {
-    orderStore.deliverProduct(orderId, productId);
+    store.commit("deliverProduct", {orderId, productId});
 }
 
 function handleFinishOrder() {
-    orderStore.finishOrder(orderId);
+    store.commit("finishOrder", {orderId});
 }
 
 function handleCancelOrder() {
-    orderStore.cancelOrder(orderId);
+    store.commit("cancelOrder", {orderId});
 }
 </script>
 

@@ -1,20 +1,21 @@
 <script setup lang="ts">
 import moment from "moment";
-import {useOrders} from "../store";
 import {computed} from "vue";
+import {useStore} from "../store";
+import {Order} from "../store/modules/orders/types";
 
-const orderStore = useOrders();
+const store = useStore();
 
 const orders = computed(() => {
-    return orderStore.orders.sort((a, b) => {
+    const allOrders = [...store.getters.allOrders];
+    return allOrders.sort((a: Order, b: Order) => {
         if (a.finish_time > b.finish_time) return -1
         else return 1;
-    }).sort((a, b) => {
-        if (a.status == "ordered" && b.status != "ordered") return -1
+    }).sort((a: Order, b: Order) => {
+        if (a.status === "ordered" && b.status !== "ordered") return -1
         else return 0;
     })
 });
-
 </script>
 
 <template>
@@ -65,13 +66,12 @@ const orders = computed(() => {
                 </tr>
                 <tr>
                     <td colspan="3"><h3>Ümumi gəlir:</h3></td>
-                    <td><h3>{{ orderStore.revenue }} AZN</h3></td>
+                    <td><h3>{{ store.getters.revenue }} AZN</h3></td>
                 </tr>
                 </tbody>
             </table>
         </div>
     </div>
-
 </template>
 
 <style scoped lang="scss">

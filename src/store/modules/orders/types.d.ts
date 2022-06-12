@@ -1,3 +1,7 @@
+export interface OrderState {
+    orders: Array<Order>,
+}
+
 export interface Order {
     id: string,
     table_id: string,

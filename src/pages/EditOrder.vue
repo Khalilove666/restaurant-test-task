@@ -3,13 +3,14 @@ import {computed, onMounted, ref} from "vue";
 import {useRoute, useRouter} from "vue-router";
 import moment from "moment";
 import {uuid} from "vue3-uuid"
-import {OrderProduct, Product, Table} from "../store/types";
-import {useOrders} from "../store";
+import {OrderProduct, Product, Table} from "../store/modules/orders/types";
 import {GetProducts} from "../api";
+import {useStore} from "../store";
+import {Order} from "../store/modules/orders/types";
 
 const router = useRouter();
 const route = useRoute();
-const orderStore = useOrders();
+const store = useStore();
 
 const selectedProduct = ref("");
 const selectedQuantity = ref(1);
@@ -21,7 +22,7 @@ const products = ref<Array<Product>>([]);
 const selectedProductPrice = computed(() => {
     return (products.value.find((item) => item.id === selectedProduct.value)?.price || 0) * selectedQuantity.value
 })
-const currentOrder = computed(() => orderStore.orders.find((order) => order.id == currentOrderId.value));
+const currentOrder = computed(() => store.getters.allOrders.find((order: Order) => order.id == currentOrderId.value));
 const currentProducts = computed(() => currentOrder.value?.products || [])
 
 onMounted(async () => {
@@ -47,11 +48,12 @@ function handleAddProduct() {
         status: "ordered",
         waiting_minutes: 0,
     }
-    orderStore.addProduct(currentOrderId.value, orderProduct);
+    store.commit("addProduct", {orderId: currentOrderId.value, product: orderProduct});
+
 }
 
 function handleRemoveProduct(productId: string) {
-    orderStore.removeProduct(currentOrderId.value, productId);
+    store.commit("removeProduct", {orderId: currentOrderId.value, productId});
 }
 
 function validateProductFields() {
